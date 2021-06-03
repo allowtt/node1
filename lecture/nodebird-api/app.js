@@ -1,29 +1,26 @@
 const express = require('express');
-const cookieParser = require('cookie-parser');
-const morgan = require('morgan');
 const path = require('path');
+const cookieParser = require('cookie-parser');
+const passport = require('passport');
+const morgan = require('morgan');
 const session = require('express-session');
 const nunjucks = require('nunjucks');
 const dotenv = require('dotenv');
-const passport = require('passport');
-dotenv.config();    //process.env에 config에 설정한 설정값이 들어간다.
-const pageRouter = require('./routes/page');
-const authRouter = require('./routes/auth');
-const postRouter = require('./routes/post');
-const userRouter = require('./routes/user');
 
+dotenv.config();
+const authRouter = require('./routes/auth');
+const indexRouter = require('./routes');
 const {sequelize} = require('./models');
 const passportConfig = require('./passport');
-
+const { Passport } = require('passport');
 
 const app = express();
-passportConfig(); // 패스포트 설정
-///////
-app.set('port', process.env.PORT || 8001);
+passportConfig();
+app.set('port', process.env.PORT || 8002);
 app.set('view engine', 'html');
 nunjucks.configure('views', {
-  express: app,
-  watch: true,
+    express: app,
+    watch: true,
 });
 
 sequelize.sync({force: false})
@@ -33,11 +30,11 @@ sequelize.sync({force: false})
     .catch((err) => {
         console.error(err);
     });
+
 app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/img', express.static(path.join(__dirname, 'uploads')));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false}));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(session({
     resave: false,
@@ -48,32 +45,19 @@ app.use(session({
         secure: false,
     },
 }));
-
-//express session보다 아래 위치해야한다.
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/', pageRouter);
 app.use('/auth', authRouter);
-app.use('/post', postRouter);
-app.use('/user', userRouter);
-
-app.use((req, res, next) => {
-    console.log('404404404');
-    const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
-    error.status = 404;
-    next(error);
-});
+app.use('/', indexRouter);
 
 app.use((err, req, res, next) => {
-    console.log(err.message);
     res.locals.message = err.message;
     res.locals.error = process.env.NODE_ENV !== 'production' ? err : {};
-    // res.status(err.status || 500);
-    // res.render('error');
-    res.status(err.status || 500).render('error');
+    res.status(err.status || 500);
+    res.render('error');
 });
 
 app.listen(app.get('port'), () => {
-    console.log(app.get('port'),'번 포트에서 대기중!');
+    console.log(app.get('port'),'번 포트에서 대기중');
 });
