@@ -130,3 +130,6 @@ temp/
 
 # End of https://www.toptal.com/developers/gitignore/api/node
 sns-service/config/config.json
+sns-service/.env
+sns-service/.env
+lecture/nodebird-api/config/config.json
