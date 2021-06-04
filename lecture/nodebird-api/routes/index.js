@@ -13,6 +13,13 @@ router.get('/', async (req, res, next) => {
         where: { id: req.user && req.user.id || null },
         include: { model: Domain },
       });
+      // User.findAll({
+      //   where: {id: req.user},
+      // }).then(results => {
+      //   console.log(results);
+      // }).catch(error => {
+      //   console.error(error);
+      // }) ;
       res.render('login', {
         user,
         domains: user && user.Domains,

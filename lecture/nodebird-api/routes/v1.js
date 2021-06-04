@@ -3,7 +3,8 @@ const jwt = require('jsonwebtoken');
 
 const {verifyToken} = require('./middlewares');
 const {Domain, User} = require('../models');
-
+const Hashtag = require('../models/hashtag');
+const Post = require('../models/post');
 const router = express.Router();
 
 router.post('/token', async (req, res) => {
@@ -49,5 +50,53 @@ router.post('/token', async (req, res) => {
 router.get('/test', verifyToken, (req, res) => {
     res.json(req.decoded);
 });
+
+router.get('/posts/my', verifyToken, (req, res) => {
+    Post.findAll({
+        where: {userId: req.decoded.id},
+    })
+    .then((posts) => {
+        console.log(`posts: ${JSON.stringify(posts)}`)
+        res.json({
+            code: 200,
+            payload: posts,
+        });
+    })
+    .catch((error) => {
+        console.error(error);
+        res.status(500).json({
+            code: 500,
+            message: '서버에러',
+        });
+    });
+});
+
+
+router.get('/posts/hashtag/:title', verifyToken, async (req, res) => {
+    try {
+        const hashtag = await Hashtag.findOne({
+            where: {title: req.params.title},
+        });
+
+        if(!hashtag) {
+            return res.status(404).json({
+                code: 404,
+                message: '검색 결과 x',
+            });
+        }
+        
+        return res.json({
+            code: 200,
+            payload: hashtag,
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            code: 500,
+            message: '서버에러',
+        });
+    }
+})
 
 module.exports = router;
