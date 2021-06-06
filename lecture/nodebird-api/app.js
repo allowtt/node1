@@ -10,11 +10,12 @@ const dotenv = require('dotenv');
 dotenv.config();
 const authRouter = require('./routes/auth');
 const v1Router = require('./routes/v1');
+const v2Router = require('./routes/v2');
 const indexRouter = require('./routes');
 const {sequelize} = require('./models');
 const passportConfig = require('./passport');
 const { Passport } = require('passport');
-
+// const cors = require('cors');
 const app = express();
 passportConfig();
 app.set('port', process.env.PORT || 8002);
@@ -48,9 +49,11 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+// app.use(cors());
 
 app.use('/auth', authRouter);
 app.use('/v1', v1Router);
+app.use('/v2', v2Router);
 app.use('/', indexRouter);
 
 app.use((err, req, res, next) => {
