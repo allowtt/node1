@@ -1,5 +1,5 @@
 const { Op } = require('Sequelize');
-
+//check
 const { Good, Auction, User, sequelize } = require('./models');
 
 module.exports = async () => {
