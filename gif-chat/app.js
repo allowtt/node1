@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const morgan = require('morgan');   //요청에대한거 기록 콘솔에 22233333
+const morgan = require('morgan');   //요청에대한거 기록 콘솔에 222333334444
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const nunjucks = require('nunjucks');
