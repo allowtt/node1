@@ -29,9 +29,9 @@ const request = async (req, api) => {
 
 router.get('/mypost', async (req, res, next) => {
     try {
-        console.log('11111');
+        console.log('111112222');
         const result = await request(req, '/posts/my');
-        console.log('22222');
+        console.log('2233333222');
         console.log(`result: ${result.data}`);
         res.status(200).json(result.data);
     } catch (error) {
