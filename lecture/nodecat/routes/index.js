@@ -22,7 +22,7 @@ const request = async (req, api) => {
       if (error.response.status === 419) { // 토큰 만료시 토큰 재발급 받기
         delete req.session.jwt;
         return request(req, api);
-      } // 419 외의 다른  test
+      } // 419 외의 다른  test333
       return error.response;
     }
   };
